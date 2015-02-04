@@ -3,6 +3,7 @@ Created on 03.02.2015
 
 @author: Salaxy
 '''
+from cmath import rect
 
 '''
 Created on 02.02.2015
@@ -39,19 +40,49 @@ while(1):
         #realArea = ABS(cvContourArea(c));
         realArea = abs(cv2.contourArea(elem))
         convex = cv2.isContourConvex(elem)
-        print realArea
+        #print realArea
+        
+        
+        x,y,w,h = cv2.boundingRect(elem)
+        rect = np.array([[x,y],[x+w,y],[x+w,y+h],[x,y+h]], np.int32)
+        rect = rect.reshape((-1,1,2))
+        rectArea = abs(cv2.contourArea(rect))
+        
+        if ((rectArea > 35000) and (rectArea < 45000)):
+            print rectArea
+            img = cv2.polylines(frame,[rect],True,(0,255,255))
+       
+       
+        #cv2.drawContours(frame, rect, -1, (0,0,255), 3)
+        #img = cv2.rectangle(frame,(x,y),(x+w,y+h),(0,0,255),2)
+        #TODO hier nur die grossen druch lassen
+        
+        #rect = cv2.minAreaRect(elem)
+        #box = cv2.boxPoints(rect)
+        #box = np.int0(rect)
+        #im = cv2.drawContours(frame,[rect],0,(0,0,255),2)
+        
+        #cv2.approxPolyDP(curve, epsilon, closed)s
+        #cv2.approxPolyDP(elem, output, True)
         
         #skip small contours
-        if( (realArea < 200) or (not convex)):
+        #if( (realArea < 50) or (not convex)):
+        #if(realArea < 0):
+        #    continue
+        
+        #cv2.drawContours(frame, elem, -1, (255,255,0), 3)
+        
+        if(not convex):
             continue
         
+        cv2.drawContours(frame, elem, -1, (0,255,255), 3)
         
         #if (cv2.isContourConvex(elem)):
         
             #cv2.drawContours(frame, elem, -1, (0,0,255), 3)
         
         #if (realArea > minAreaBlue && realArea< maxAreaBlue)
-        if ((realArea > 100) and (realArea< 1000)):
+        #if ((realArea > 100) and (realArea< 1000)):
         
             #//berechne Umfang des aktuellen Objektes
             #arcLength = cvArcLength(c);
@@ -70,7 +101,7 @@ while(1):
                 #blueRectObjects.push_back(rect);
         
         
-            cv2.drawContours(frame, elem, -1, (255,0,0), 3)
+        cv2.drawContours(frame, elem, -1, (255,0,0), 3)
 
     # define range of blue color in HSV
     #lower_blue = np.array([110,50,50])
