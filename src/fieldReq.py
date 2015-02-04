@@ -1,8 +1,11 @@
 '''
-Created on 03.02.2015
+Created on 02.02.2015
 
-@author: Salaxy
+@author: Andy Klay
 '''
+
+import cv2
+import numpy as np
 from cmath import rect
 
 '''
@@ -33,53 +36,62 @@ while(1):
     #cnt = contours[4]
     #cv2.drawContours(frame, [cnt], 0, (0,255,0), 3)
     
-    for elem in contours:
-        #print elem
+    for cnt in contours:
+        #print cnt
         
         #berechne Flaeche des aktuellen Objektes
         #realArea = ABS(cvContourArea(c));
-        realArea = abs(cv2.contourArea(elem))
-        convex = cv2.isContourConvex(elem)
+        realArea = abs(cv2.contourArea(cnt))
+        convex = cv2.isContourConvex(cnt)
         #print realArea
         
+        #TODO vorher villt noch das weisse Blatt papier
+        # isolieren und dann weiter arbeiten!
         
-        x,y,w,h = cv2.boundingRect(elem)
+        x,y,w,h = cv2.boundingRect(cnt)
         rect = np.array([[x,y],[x+w,y],[x+w,y+h],[x,y+h]], np.int32)
         rect = rect.reshape((-1,1,2))
         rectArea = abs(cv2.contourArea(rect))
         
-        if ((rectArea > 35000) and (rectArea < 45000)):
+        if ((rectArea > 25000) and (rectArea < 50000)):
             print rectArea
-            img = cv2.polylines(frame,[rect],True,(0,255,255))
+            crop_img = cv2.polylines(frame,[rect],True,(0,255,255))
+            
+            #crop_img = edges[x:y,w:h]
+            
+            #imgheader = cv2.cv.CreateImageHeader((crop_img[0], crop_img[1]),
+            #opencvImg = np.asarray(imgheader[:,:])
+            #cv2.imwrite('roi.png', opencvImg)
+            #cv2.imshow("cropped", crop_img)
        
        
         #cv2.drawContours(frame, rect, -1, (0,0,255), 3)
         #img = cv2.rectangle(frame,(x,y),(x+w,y+h),(0,0,255),2)
         #TODO hier nur die grossen druch lassen
         
-        #rect = cv2.minAreaRect(elem)
+        #rect = cv2.minAreaRect(cnt)
         #box = cv2.boxPoints(rect)
         #box = np.int0(rect)
         #im = cv2.drawContours(frame,[rect],0,(0,0,255),2)
         
         #cv2.approxPolyDP(curve, epsilon, closed)s
-        #cv2.approxPolyDP(elem, output, True)
+        #cv2.approxPolyDP(cnt, output, True)
         
         #skip small contours
         #if( (realArea < 50) or (not convex)):
         #if(realArea < 0):
         #    continue
         
-        #cv2.drawContours(frame, elem, -1, (255,255,0), 3)
+        #cv2.drawContours(frame, cnt, -1, (255,255,0), 3)
         
         if(not convex):
             continue
         
-        cv2.drawContours(frame, elem, -1, (0,255,255), 3)
+        cv2.drawContours(frame, cnt, -1, (0,255,255), 3)
         
-        #if (cv2.isContourConvex(elem)):
+        #if (cv2.isContourConvex(cnt)):
         
-            #cv2.drawContours(frame, elem, -1, (0,0,255), 3)
+            #cv2.drawContours(frame, cnt, -1, (0,0,255), 3)
         
         #if (realArea > minAreaBlue && realArea< maxAreaBlue)
         #if ((realArea > 100) and (realArea< 1000)):
@@ -101,7 +113,7 @@ while(1):
                 #blueRectObjects.push_back(rect);
         
         
-        cv2.drawContours(frame, elem, -1, (255,0,0), 3)
+        cv2.drawContours(frame, cnt, -1, (255,0,0), 3)
 
     # define range of blue color in HSV
     #lower_blue = np.array([110,50,50])
