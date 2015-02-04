@@ -29,16 +29,42 @@ while(1):
     
     #cnt = contours[4]
     #cv2.drawContours(frame, [cnt], 0, (0,255,0), 3)
+    
+    for elem in contours:
+        print elem
+        
+        #berechne Flaeche des aktuellen Objektes
+        #realArea = ABS(cvContourArea(c));
+        
+        
+        #if (realArea > minAreaBlue && realArea< maxAreaBlue)
+        
+            #//berechne Umfang des aktuellen Objektes
+            #arcLength = cvArcLength(c);
+        
+            #//berechne Formfaktor des aktuellen Objektes
+            #formFactor = ABS(1/ ((arcLength*arcLength) / (4*PI*realArea )));
+        
+            #if(formFactor>0.73 && formFactor<0.85){
+        
+                #//berechne Rahmen des aktuellen Objektes
+                #rect = cvContourBoundingRect(c);
+                #rectArea=rect.width*rect.height;
+                #cvDrawContours( blueImage[3], c, aussereFarbe, innereFarbe, 1, 3, 8 );
+                #//objekt in vector speichern
+                #blueRectObjects.push_back(rect);
+        
+        
 
     # define range of blue color in HSV
-    lower_blue = np.array([110,50,50])
-    upper_blue = np.array([130,255,255])
+    #lower_blue = np.array([110,50,50])
+    #upper_blue = np.array([130,255,255])
 
     # Threshold the HSV image to get only blue colors
-    mask = cv2.inRange(hsv, lower_blue, upper_blue)
+    #mask = cv2.inRange(hsv, lower_blue, upper_blue)
 
     # Bitwise-AND mask and original image
-    res = cv2.bitwise_and(frame,frame, mask= mask)
+    #res = cv2.bitwise_and(frame,frame, mask= mask)
 
     cv2.imshow('frame',frame)
     #cv2.imshow('mask',mask)
