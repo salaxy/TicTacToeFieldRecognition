@@ -70,9 +70,11 @@ while(1):
                 #realArea = abs(cv2.contourArea(cnt))
                 #convex = cv2.isContourConvex(cnt)
                 
-                    a,b,c,d = cv2.boundingRect(cnt)
-                #rect = np.array([[x,y],[x+w,y],[x+w,y+h],[x,y+h]], np.int32)
-                #rect = rect.reshape((-1,1,2))
+                # a,b,c,d = cv2.boundingRect(cnt)
+                    # This is the Region of Interest, so next step is to isolate it
+                    rect = np.array([[x,y],[x+w,y],[x+w,y+h],[x,y+h]], np.int32)
+                    rect = rect.reshape((-1,1,2))
+                    cv2.drawContours(frame, [rect], -1, (0,0,255), 3)
                 #rectArea = abs(cv2.contourArea(rect))
             
     
