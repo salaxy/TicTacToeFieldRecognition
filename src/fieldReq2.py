@@ -57,11 +57,12 @@ while(1):
             rect_area = w*h
             extent = float(area)/rect_area
             
-            if (area > 0 and area< 50000):
+            if (area > 20000 and area< 100000):
                 formFactor = abs(1/ ((perimeter*perimeter) / (4*pi*area )));
                 print formFactor
+                cv2.drawContours(frame, [cnt], -1, (0,255,255), 3)
                 
-                if(formFactor>0.01 and formFactor<1.0):
+                if(formFactor>0.55 and formFactor<0.7):
                     cv2.drawContours(frame, [cnt], -1, (0,255,0), 3)
                     #cv2.drawContours(frame, contours, -1, (0,0,255), 3)
                 #berechne Flaeche des aktuellen Objektes
