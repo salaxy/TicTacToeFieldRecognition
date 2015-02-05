@@ -101,19 +101,26 @@ while(1):
                         
                                 cv2.drawContours(roiFrame, [found], -1, (255,0,255), 3)                        
                         
-                
+                                moment = cv2.moments(found)
     
                         
                                 #rotating the roi for analysis of the sub sections
                                 (h, w) = roi.shape[:2]
-                                center = (w / 2, h / 2)
+                                cx = int(moment['m10']/moment['m00'])
+                                cy = int(moment['m01']/moment['m00'])
+                                center = (cx, cy)
+                                #center = (w / 2, h / 2)
                                 matrix = cv2.getRotationMatrix2D(center, 10, 1.0)
                                 rotated = cv2.warpAffine(roi, matrix, (w, h))
                                 cv2.imshow("rotated", rotated)
                     
+                                #prepare correct transform.
+                                
+                                pts1 = np.float32([[56,65],[368,52],[28,387],[389,390]])
+                                pts2 = np.float32([[0,0],[w,0],[0,h],[h,w]])
                     
-                    
-    
+                                #transformMatrix = cv2.getPerspectiveTransform(pts1,pts2)
+                                #dst = cv2.warpPerspective(roi,M,(300,300))
 
     cv2.imshow('frame',frame)
     
