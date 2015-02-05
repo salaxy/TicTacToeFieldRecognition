@@ -17,7 +17,7 @@ while(1):
     # Take each frame
     # three frames per secound are enough
     # for gamestate recoqnition
-    #time.sleep(0.33)
+    time.sleep(0.33)
     _, frame = cap.read()
 
     # Convert BGR to HSV
@@ -57,9 +57,10 @@ while(1):
             rect_area = w*h
             extent = float(area)/rect_area
             
-            if (area > 20000 and area< 100000):
+            if (area > 20000 and area< 60000):
                 formFactor = abs(1/ ((perimeter*perimeter) / (4*pi*area )));
-                print formFactor
+                #print formFactor
+                #print area
                 cv2.drawContours(frame, [cnt], -1, (0,255,255), 3)
                 
                 if(formFactor>0.55 and formFactor<0.7):
@@ -75,9 +76,14 @@ while(1):
                     rect = np.array([[x,y],[x+w,y],[x+w,y+h],[x,y+h]], np.int32)
                     rect = rect.reshape((-1,1,2))
                     cv2.drawContours(frame, [rect], -1, (0,0,255), 3)
-                #rectArea = abs(cv2.contourArea(rect))
+                    
+                    roi = edges[y:y+h,x:x+w]
+                    #roi = edges[100:200,100:300]
+                    print roi.shape
+                    #imgheader = cv2.cv.CreateImageHeader((roi[0], roi[1]), cv2.cv.IPL_DEPTH_8U, 1)
+                    #opencvImg = np.asarray(imgheader[:,:])
+                    #cv2.imshow("roi", roi)
             
-    
     
 
     cv2.imshow('frame',frame)

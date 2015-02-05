@@ -59,7 +59,7 @@ while(1):
             
             #crop_img = edges[x:y,w:h]
             
-            #imgheader = cv2.cv.CreateImageHeader((crop_img[0], crop_img[1]),
+            #imgheader = cv2.cv.CreateImageHeader((crop_img[0], crop_img[1])),
             #opencvImg = np.asarray(imgheader[:,:])
             #cv2.imwrite('roi.png', opencvImg)
             #cv2.imshow("cropped", crop_img)
