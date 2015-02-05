@@ -75,7 +75,7 @@ while(1):
         #im = cv2.drawContours(frame,[rect],0,(0,0,255),2)
         
         #cv2.approxPolyDP(curve, epsilon, closed)s
-        #cv2.approxPolyDP(cnt, output, True)
+        #cv2.approxPolyDP(cnt, output, True)        
         
         #skip small contours
         #if( (realArea < 50) or (not convex)):
