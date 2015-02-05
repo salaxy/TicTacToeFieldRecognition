@@ -22,6 +22,7 @@ while(1):
 
     # Convert BGR to HSV
     hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
+    frame2 = np.copy(frame)
     blur = cv2.GaussianBlur(hsv,(5,5),0)
     
     
@@ -33,7 +34,6 @@ while(1):
     
     
     for cnt in contours:
-        
         
         #if(cv2.isContourConvex(cnt)):
         if(True):
@@ -75,19 +75,44 @@ while(1):
                     cv2.drawContours(frame, [rect], -1, (0,0,255), 3)
                     
                     roi = dilation[y:y+h,x:x+w]
+                    roiFrame = frame2[y:y+h,x:x+w]
                     #roi = edges[100:200,100:300]
                     print roi.shape
                     #imgheader = cv2.cv.CreateImageHeader((roi[0], roi[1]), cv2.cv.IPL_DEPTH_8U, 1)
                     #opencvImg = np.asarray(imgheader[:,:])
                     cv2.imshow("roi", roi)
-            
-                    #rotating the roi for analysis of the sub sections
                     
-                    (h, w) = roi.shape[:2]
-                    center = (w / 2, h / 2)
-                    M = cv2.getRotationMatrix2D(center, 10, 1.0)
-                    rotated = cv2.warpAffine(roi, M, (w, h))
-                    cv2.imshow("rotated", rotated)
+                    #get the eges for rotation
+                    cntsRoi, hierarchy = cv2.findContours(roi,cv2.RETR_LIST,cv2.CHAIN_APPROX_SIMPLE)
+                    #cv2.drawContours(roiFrame, cntsRoi, -1, (0,255,255), 3)
+                    cv2.imshow("roiFrame", roiFrame)
+                    
+                    for found in cntsRoi:
+                        area = abs(cv2.contourArea(found))
+                        perimeter = cv2.arcLength(found,True)
+                        
+                        if (area > 20000 and area< 60000):
+                        
+                            formFactor = abs(1/ ((perimeter*perimeter) / (4*pi*area )));
+                            #print formFactor
+                            #print area
+
+                            if(formFactor>0.55 and formFactor<0.7):
+                        
+                                cv2.drawContours(roiFrame, [found], -1, (255,0,255), 3)                        
+                        
+                
+    
+                        
+                                #rotating the roi for analysis of the sub sections
+                                (h, w) = roi.shape[:2]
+                                center = (w / 2, h / 2)
+                                matrix = cv2.getRotationMatrix2D(center, 10, 1.0)
+                                rotated = cv2.warpAffine(roi, matrix, (w, h))
+                                cv2.imshow("rotated", rotated)
+                    
+                    
+                    
     
 
     cv2.imshow('frame',frame)
