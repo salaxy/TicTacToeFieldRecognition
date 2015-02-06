@@ -212,7 +212,7 @@ while(1):
     edges = cv2.Canny(frame,100,255)
     dilation = cv2.dilate(edges,np.ones((1,1),np.uint8),iterations = 2)
     
-    contours, hierarchy = cv2.findContours(edges,cv2.RETR_LIST,cv2.CHAIN_APPROX_SIMPLE)
+    contours, hierarchy = cv2.findContours(dilation,cv2.RETR_LIST,cv2.CHAIN_APPROX_SIMPLE)
     #cv2.drawContours(frame, contours, -1, (0,255,0), 3)
 
     
@@ -232,16 +232,17 @@ while(1):
             #print perimeter
             
             epsilon = 0.1*cv2.arcLength(cnt,True)
-            approx = cv2.approxPolyDP(cnt,epsilon,True)
             
+            #approx = cv2.approxPolyDP(cnt,epsilon,True)
             #cv2.drawContours(frame, [approx], -1, (0,0,255), 3)
+            print area
             
             x,y,w,h = cv2.boundingRect(cnt)
             aspect_ratio = float(w)/h
             rect_area = w*h
             extent = float(area)/rect_area
             
-            if (area > 20000 and area< 60000):
+            if (area > 20000 and area< 70000):
                 formFactor = abs(1/ ((perimeter*perimeter) / (4*pi*area )));
                 #print formFactor
                 #print area
