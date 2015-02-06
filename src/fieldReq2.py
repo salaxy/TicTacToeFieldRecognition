@@ -228,21 +228,11 @@ while(1):
             #cx = int(M['m10']/M['m00'])
             #cy = int(M['m01']/M['m00'])
             area = abs(cv2.contourArea(cnt))
-            perimeter = cv2.arcLength(cnt,True)
-            #print perimeter
-            
-            epsilon = 0.1*cv2.arcLength(cnt,True)
-            
-            #approx = cv2.approxPolyDP(cnt,epsilon,True)
-            #cv2.drawContours(frame, [approx], -1, (0,0,255), 3)
-            print area
-            
-            x,y,w,h = cv2.boundingRect(cnt)
-            aspect_ratio = float(w)/h
-            rect_area = w*h
-            extent = float(area)/rect_area
+            #epsilon = 0.1*cv2.arcLength(cnt,True)
             
             if (area > 20000 and area< 70000):
+                
+                perimeter = cv2.arcLength(cnt,True)
                 formFactor = abs(1/ ((perimeter*perimeter) / (4*pi*area )));
                 #print formFactor
                 #print area
@@ -252,9 +242,12 @@ while(1):
                     
                     cv2.drawContours(frame, [cnt], -1, (0,255,0), 3)
 
-                    #TODO we need the corners for the robot actions
+                    x,y,w,h = cv2.boundingRect(cnt)
+                    #aspect_ratio = float(w)/h
+                    #rect_area = w*h
+                    #extent = float(area)/rect_area
 
-                
+                    #TODO we need the corners for the robot actions
                     # This is the Region of Interest, so next step is to isolate it
                     rect = np.array([[x,y],[x+w,y],[x+w,y+h],[x,y+h]], np.int32)
                     rect = rect.reshape((-1,1,2))
