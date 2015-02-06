@@ -8,6 +8,101 @@ import cv2
 import numpy as np
 from cmath import rect, pi
 import time
+from array import array
+
+
+
+def schnibbidiSchnapp(wrappedField):
+
+    # villt noch mal sicher gehen das es auchdas Feld mit 9 Einzelfeldern ist
+
+    wrappedField
+    ( height, width) = wrappedField.shape[:2]
+    widthPart = width/3
+    heightPart = height/3
+    
+    heightRowTwo = heightPart
+    heightRowThree = heightPart*2
+    
+    widthColumnTwo = widthPart
+    widthColumnThree = widthPart*2
+    
+    simpleList = []
+    
+    simpleList.append(wrappedField[0:heightRowTwo,0:widthColumnTwo])
+    cv2.imshow("roi 1", simpleList[-1])
+    simpleList.append(wrappedField[0:heightRowTwo,widthColumnTwo:widthColumnThree])
+    cv2.imshow("roi 2", simpleList[-1])
+    simpleList.append(wrappedField[0:heightRowTwo,widthColumnThree:width])
+    cv2.imshow("roi 3", simpleList[-1])
+    
+    simpleList.append(wrappedField[heightRowTwo:heightRowThree,0:widthColumnTwo])
+    cv2.imshow("roi 4", simpleList[-1])
+    simpleList.append(wrappedField[heightRowTwo:heightRowThree,widthColumnTwo:widthColumnThree])
+    cv2.imshow("roi 5", simpleList[-1])
+    simpleList.append(wrappedField[heightRowTwo:heightRowThree,widthColumnThree:width])
+    cv2.imshow("roi 6", simpleList[-1])
+    
+    simpleList.append(wrappedField[heightRowThree: height,0:widthColumnTwo])
+    cv2.imshow("roi 7", simpleList[-1])
+    simpleList.append(wrappedField[heightRowThree: height,widthColumnTwo:widthColumnThree])
+    cv2.imshow("roi 8", simpleList[-1])
+    simpleList.append(wrappedField[heightRowThree: height,widthColumnThree:width])
+    cv2.imshow("roi 9", simpleList[-1])
+    
+    
+    n=0
+    
+    for elem in simpleList:
+        
+        #cv2.imshow("roi"+'n', elem)
+    
+        n=n+1
+        print elem
+    #allFields = array([,,,
+    #                   ,,,
+    #                   ,,])
+    
+    #cv2.imshow("roi1", wrappedField[0:heightRowTwo,0:widthColumnTwo])
+    #cv2.imshow("roi2", wrappedField[heightRowThree,widthColumnThree:width])
+    #cv2.imshow("roi2", wrappedField[heightRowThree,widthColumnThree:width])
+    
+    # This is the Region of Interest, so next step is to isolate it
+    #rect = np.array([[x,y],[x+w,y],[x+w,y+h],[x,y+h]], np.int32)
+    #rect = rect.reshape((-1,1,2))
+    #cv2.drawContours(frame, [rect], -1, (0,0,255), 3)
+    
+    #roi = dilation[y:y+h,x:x+w]
+    #roiFrame = frame2[y:y+h,x:x+w]
+    #roi = edges[100:200,100:300]
+    #print roi.shape
+    #imgheader = cv2.cv.CreateImageHeader((roi[0], roi[1]), cv2.cv.IPL_DEPTH_8U, 1)
+    #opencvImg = np.asarray(imgheader[:,:])
+    #cv2.imshow("roi", roi)
+    
+    #return hnew
+
+
+def schnibbidiSchnapp2(wrappedField):
+
+    # villt noch mal sicher gehen das es auchdas Feld mit 9 Einzelfeldern ist
+
+    wrappedField
+    ( height, width) = wrappedField.shape[:2]
+    widthPart = width/3
+    heightPart = height/3
+    
+    heightRowTwo = heightPart
+    heightRowThree = heightPart*2
+    
+    widthColumnTwo = widthPart
+    widthColumnThree = widthPart*2
+    
+    simpleList = []
+    
+    
+    
+
 
 def rectify(h):
     h = h.reshape((4,2))
@@ -22,7 +117,6 @@ def rectify(h):
     hnew[3] = h[np.argmax(diff)]
     
     return hnew
-
 
 def order_points(pts):
     # initialzie a list of coordinates that will be ordered
@@ -95,7 +189,7 @@ while(1):
     # three frames per secound are enough
     # for gamestate recoqnition
     #time.sleep(0.33)
-    time.sleep(0.6)
+    time.sleep(0.8)
     _, frame = cap.read()
 
     # Convert BGR to HSV
@@ -186,7 +280,7 @@ while(1):
                                 #print len(approx)
                                 #cv2.drawContours(roiFrame, [approx], -1, (255,0,255), 3)     
                                 if(len(approx)==4):
-                                    cv2.drawContours(roiFrame, [approx], -1, (255,0,255), 3)       
+                                         
                         
                                     #rotating the roi for analysis of the sub sections
                                     ( width, height) = roi.shape[:2]
@@ -199,12 +293,14 @@ while(1):
                                     #rotated = cv2.warpAffine(roi, matrix, (w, h))
                                     #cv2.imshow("rotated", rotated)
                         
-                                    print approx
-                                    #print corners
-                                    cv2.drawContours(roiFrame, [approx[0]], -1, (0,255,0), 10)
-                                    cv2.drawContours(roiFrame, [approx[1]], -1, (0,255,0), 10)
-                                    cv2.drawContours(roiFrame, [approx[2]], -1, (0,255,0), 10)
-                                    cv2.drawContours(roiFrame, [approx[3]], -1, (0,255,0), 10)
+                                    if(False):
+                                        print approx
+                                        #draw corners and shape
+                                        cv2.drawContours(roiFrame, [approx], -1, (255,0,255), 3)  
+                                        cv2.drawContours(roiFrame, [approx[0]], -1, (0,255,0), 10)
+                                        cv2.drawContours(roiFrame, [approx[1]], -1, (0,255,0), 10)
+                                        cv2.drawContours(roiFrame, [approx[2]], -1, (0,255,0), 10)
+                                        cv2.drawContours(roiFrame, [approx[3]], -1, (0,255,0), 10)
                                     
                                     
                         
@@ -217,6 +313,11 @@ while(1):
                                     
                                     warped = four_point_transform(roiFrame, pts1)
                                     cv2.imshow("warped", warped)
+                                    
+                                    
+                                    
+                                    # TODO schnibbidischapp into nine parts
+                                    schnibbidiSchnapp(warped)
 
     cv2.imshow('frame',frame)
     
