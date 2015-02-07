@@ -8,7 +8,7 @@ import cv2
 import numpy as np
 from cmath import rect, pi
 
-def findSign(image):
+def findASign(image):
 
     edges = cv2.Canny(image,100,255)
     dilation = cv2.dilate(edges,np.ones((3,3),np.uint8),iterations = 2)
@@ -24,8 +24,8 @@ def findSign(image):
         x,y,w,h = cv2.boundingRect(ct)
         rect_area = w*h
         #cv2.drawContours(image, [ct], -1, (255,50,200), 3)
-        
-        if (rect_area > 1000 and rect_area< 5000):
+        #print rect_area
+        if (rect_area > 1000 and rect_area< 6000):
             #print area
             #print rect_area
             
@@ -44,28 +44,36 @@ def findSign(image):
             signArea=rect_area
             foundaSignFlag=foundaSignFlag+1
             
-            print "formFactor: " + str(formFactor)
-            print "aspect_ratio: " + str(aspect_ratio)
-            print "perimeter: " + str(perimeter)
-            print "extent: " + str(extent)
-            print "area: " + str(area)
-            print "countour_len: " + str(len(ct))
             
-            if (formFactor<0.5 and extent<0.5):
-                print "found a cross"
+            if (formFactor<0.5):
+            #if (formFactor<0.5 and extent<0.5):
                 sign = 1
-            elif(formFactor>0.5 and extent>0.5):
-                print "found a circle"
+            #elif(formFactor>0.5 and extent>0.5):
+            elif(formFactor>0.5):
                 sign = 2
+            
+            debug = False
+            if(debug):
+                print "formFactor: " + str(formFactor)
+                print "aspect_ratio: " + str(aspect_ratio)
+                print "perimeter: " + str(perimeter)
+                print "extent: " + str(extent)
+                print "area: " + str(area)
+                print "countour_len: " + str(len(ct))
+
+                if (sign == 1):
+                    print "found a cross"
+                elif(sign == 2):
+                    print "found a circle"
         else:       
             # wenn kein rechteck in dieser groessenordung
             # gefunden wurde,
             #dann ist das Feld leer
             pass
         
-    print "foundaSignFlag: " + str(foundaSignFlag)
-    print "signArea: " + str(signArea)
-    print ""
+    #print "foundaSignFlag: " + str(foundaSignFlag)
+    #print "signArea: " + str(signArea)
+    #print ""
     
     return sign
     pass
@@ -77,12 +85,15 @@ if __name__ == '__main__':
 
     roiOrg1 = cv2.imread("roiOrg1.png")
     roiOrg2 = cv2.imread("roiOrg2.png")
+    roiOrg8 = cv2.imread("roiOrg8.png")
 
 
-    findSign(roiOrg1)
-    findSign(roiOrg2)
+    findASign(roiOrg1)
+    findASign(roiOrg2)
+    findASign(roiOrg8)
 
 
     cv2.imshow("roiOrg1", roiOrg1)
     cv2.imshow("roiOrg2", roiOrg2)
+    cv2.imshow("roiOrg8", roiOrg8)
     cv2.waitKey(0)

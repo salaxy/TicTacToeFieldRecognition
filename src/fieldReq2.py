@@ -9,8 +9,28 @@ import numpy as np
 from cmath import rect, pi
 import time
 from array import array
-from sginsRecoqnition import findSign
+from signRecoqnition import findASign
 
+
+
+def testIfEnoughFields(edgeImageList, orgImageList):
+    listOfCnts = []
+    n = 0
+    for elem in edgeImageList:
+        cnts, hierarchy = cv2.findContours(elem, cv2.RETR_LIST, cv2.CHAIN_APPROX_SIMPLE)
+        listOfCnts.append(cnts)
+        for ct in cnts:
+            area = abs(cv2.contourArea(ct))
+            perimeter = cv2.arcLength(ct, True)
+            #cv2.drawContours(warpedFrame, [found], -1, (255,50,200), 3)
+            if (area > 50 and area < 500):
+                print area
+                formFactor = abs(1 / ((perimeter * perimeter) / (4 * pi * area)))
+                cv2.drawContours(orgImageList[n], [ct], -1, (0, 255, 255), 3)
+        
+        #print "nr."+ str(n)
+        #print len(cnts)
+        n = n + 1
 
 def schnibbidiSchnapp(wrapedEdges, warpedImage):
 
@@ -31,68 +51,74 @@ def schnibbidiSchnapp(wrapedEdges, warpedImage):
     orgImageList = []
 
     
-    edgeImageList.append(wrapedEdges[0:heightRowTwo,0:widthColumnTwo])
+    #edgeImageList.append(wrapedEdges[0:heightRowTwo,0:widthColumnTwo])
     orgImageList.append(warpedImage[0:heightRowTwo,0:widthColumnTwo])
-    cv2.imshow("roiDilat 1", edgeImageList[-1])
-    eins=findSign(warpedImage)
+    #cv2.imshow("roiDilat 1", edgeImageList[-1])
+    one=findASign(orgImageList[-1])
     #cv2.imwrite("roiDilat1.png", edgeImageList[-1])
 
-    edgeImageList.append(wrapedEdges[0:heightRowTwo,widthColumnTwo:widthColumnThree])
+    #edgeImageList.append(wrapedEdges[0:heightRowTwo,widthColumnTwo:widthColumnThree])
     orgImageList.append(warpedImage[0:heightRowTwo,widthColumnTwo:widthColumnThree])
-    cv2.imshow("roiDilat 2", edgeImageList[-1])
-    zwei=findSign(warpedImage)
+    #cv2.imshow("roiDilat 2", edgeImageList[-1])
+    two=findASign(orgImageList[-1])
     #cv2.imwrite("roiDilat2.png", edgeImageList[-1])
 
-    edgeImageList.append(wrapedEdges[0:heightRowTwo,widthColumnThree:width])
+    #edgeImageList.append(wrapedEdges[0:heightRowTwo,widthColumnThree:width])
     orgImageList.append(warpedImage[0:heightRowTwo,widthColumnThree:width])
-    cv2.imshow("roiDilat 3", edgeImageList[-1])
-    eins=findSign(warpedImage)
+    #cv2.imshow("roiDilat 3", edgeImageList[-1])
+    three=findASign(orgImageList[-1])
     #cv2.imwrite("roiDilat3.png", edgeImageList[-1])
 
     
     #edgeImageList.append(wrapedEdges[heightRowTwo:heightRowThree,0:widthColumnTwo])
+    orgImageList.append(warpedImage[heightRowTwo:heightRowThree,0:widthColumnTwo])
+    four=findASign(orgImageList[-1])
     #cv2.imshow("roiDilat 4", edgeImageList[-1])
-    #edgeImageList.append(wrapedEdges[heightRowTwo:heightRowThree,widthColumnTwo:widthColumnThree])
+    #edgeImageList.append(wrapedEdges[heightRowTwo:heightRowThree,widthColumnTwo:widthColumnThree])    
+    orgImageList.append(warpedImage[heightRowTwo:heightRowThree,widthColumnTwo:widthColumnThree])
+    five=findASign(orgImageList[-1])
     #cv2.imshow("roiDilat 5", edgeImageList[-1])
     #edgeImageList.append(wrapedEdges[heightRowTwo:heightRowThree,widthColumnThree:width])
+    orgImageList.append(warpedImage[heightRowTwo:heightRowThree,widthColumnThree:width])
+    six=findASign(orgImageList[-1])
     #cv2.imshow("roiDilat 6", edgeImageList[-1])
     
     #edgeImageList.append(wrapedEdges[heightRowThree: height,0:widthColumnTwo])
+    orgImageList.append(warpedImage[heightRowThree: height,0:widthColumnTwo])
+    seven=findASign(orgImageList[-1])
     #cv2.imshow("roiDilat 7", edgeImageList[-1])
     #edgeImageList.append(wrapedEdges[heightRowThree: height,widthColumnTwo:widthColumnThree])
+    orgImageList.append(warpedImage[heightRowThree: height,widthColumnTwo:widthColumnThree])
+    cv2.imwrite("roiOrg8.png", orgImageList[-1])
+    eight=findASign(orgImageList[-1])
     #cv2.imshow("roiDilat 8", edgeImageList[-1])
     #edgeImageList.append(wrapedEdges[heightRowThree: height,widthColumnThree:width])
+    orgImageList.append(warpedImage[heightRowThree: height,widthColumnThree:width])
+    nine=findASign(orgImageList[-1])
     #cv2.imshow("roiDilat 9", edgeImageList[-1])
     
     
-    listOfCnts = []
-    n=0
-    for elem in edgeImageList:
-        
-        cnts, hierarchy = cv2.findContours(elem,cv2.RETR_LIST,cv2.CHAIN_APPROX_SIMPLE)
-         
-        listOfCnts.append(cnts)
-        
-        for ct in cnts:
-            area = abs(cv2.contourArea(ct))
-            perimeter = cv2.arcLength(ct,True)
-            
-            #cv2.drawContours(warpedFrame, [found], -1, (255,50,200), 3)
-            if (area > 50 and area< 500):
-                print area
-                formFactor = abs(1/ ((perimeter*perimeter) / (4*pi*area )));
-                cv2.drawContours(orgImageList[n], [ct], -1, (0,255,255), 3)
-        
-        #print "nr."+ str(n)
-        #print len(cnts)
-        n=n+1
+    print str(one) + " " + str(two) + " " + str(three)
+    print str(four) + " " + str(five) + " " + str(six)
+    print str(seven) + " " + str(eight) + " " + str(nine)
+    print ""
     
-    cv2.imshow("roiOrg1", orgImageList[0])
+    #testIfEnoughFields(edgeImageList, orgImageList)
+    
+    cv2.imshow("roiOrg 1", orgImageList[0])
     #cv2.imwrite("roiOrg1.png", orgImageList[0])
     cv2.imshow("roiOrg 2", orgImageList[1])
     #cv2.imwrite("roiOrg2.png", orgImageList[1])
     cv2.imshow("roiOrg 3", orgImageList[2])
     #cv2.imwrite("roiOrg3.png", orgImageList[2])
+    
+    cv2.imshow("roiOrg 4", orgImageList[3])
+    cv2.imshow("roiOrg 5", orgImageList[4])
+    cv2.imshow("roiOrg 6", orgImageList[5])
+    
+    cv2.imshow("roiOrg 7", orgImageList[6])
+    cv2.imshow("roiOrg 8", orgImageList[7])
+    cv2.imshow("roiOrg 9", orgImageList[8])
     
     #for elem in edgeImageList:
         
@@ -248,7 +274,7 @@ while(1):
     # three frames per secound are enough
     # for gamestate recoqnition
     #time.sleep(0.33)
-    time.sleep(0.4)
+    time.sleep(0.6)
     _, frame = cap.read()
 
     # Convert BGR to HSV
