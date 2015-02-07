@@ -12,12 +12,12 @@ from array import array
 
 
 
-def schnibbidiSchnapp(wrappedField):
+def schnibbidiSchnapp(wrapedEdges, warpedImage):
 
     # villt noch mal sicher gehen das es auchdas Feld mit 9 Einzelfeldern ist
 
-    wrappedField
-    ( height, width) = wrappedField.shape[:2]
+    wrapedEdges
+    ( height, width) = wrapedEdges.shape[:2]
     widthPart = width/3
     heightPart = height/3
     
@@ -27,38 +27,60 @@ def schnibbidiSchnapp(wrappedField):
     widthColumnTwo = widthPart
     widthColumnThree = widthPart*2
     
-    simpleList = []
+    edgeImageList = []
+    orgImageList = []
+
     
-    simpleList.append(wrappedField[0:heightRowTwo,0:widthColumnTwo])
-    cv2.imshow("roiDilat 1", simpleList[-1])
-    simpleList.append(wrappedField[0:heightRowTwo,widthColumnTwo:widthColumnThree])
-    cv2.imshow("roiDilat 2", simpleList[-1])
-    simpleList.append(wrappedField[0:heightRowTwo,widthColumnThree:width])
-    cv2.imshow("roiDilat 3", simpleList[-1])
+    edgeImageList.append(wrapedEdges[0:heightRowTwo,0:widthColumnTwo])
+    orgImageList.append(warpedImage[0:heightRowTwo,0:widthColumnTwo])
+    cv2.imshow("roiDilat 1", edgeImageList[-1])
+
+    edgeImageList.append(wrapedEdges[0:heightRowTwo,widthColumnTwo:widthColumnThree])
+    orgImageList.append(warpedImage[0:heightRowTwo,widthColumnTwo:widthColumnThree])
+    cv2.imshow("roiDilat 2", edgeImageList[-1])
+
+    edgeImageList.append(wrapedEdges[0:heightRowTwo,widthColumnThree:width])
+    orgImageList.append(warpedImage[0:heightRowTwo,widthColumnThree:width])
+    cv2.imshow("roiDilat 3", edgeImageList[-1])
+
     
-    simpleList.append(wrappedField[heightRowTwo:heightRowThree,0:widthColumnTwo])
-    cv2.imshow("roiDilat 4", simpleList[-1])
-    simpleList.append(wrappedField[heightRowTwo:heightRowThree,widthColumnTwo:widthColumnThree])
-    cv2.imshow("roiDilat 5", simpleList[-1])
-    simpleList.append(wrappedField[heightRowTwo:heightRowThree,widthColumnThree:width])
-    cv2.imshow("roiDilat 6", simpleList[-1])
+    #edgeImageList.append(wrapedEdges[heightRowTwo:heightRowThree,0:widthColumnTwo])
+    #cv2.imshow("roiDilat 4", edgeImageList[-1])
+    #edgeImageList.append(wrapedEdges[heightRowTwo:heightRowThree,widthColumnTwo:widthColumnThree])
+    #cv2.imshow("roiDilat 5", edgeImageList[-1])
+    #edgeImageList.append(wrapedEdges[heightRowTwo:heightRowThree,widthColumnThree:width])
+    #cv2.imshow("roiDilat 6", edgeImageList[-1])
     
-    simpleList.append(wrappedField[heightRowThree: height,0:widthColumnTwo])
-    cv2.imshow("roiDilat 7", simpleList[-1])
-    simpleList.append(wrappedField[heightRowThree: height,widthColumnTwo:widthColumnThree])
-    cv2.imshow("roiDilat 8", simpleList[-1])
-    simpleList.append(wrappedField[heightRowThree: height,widthColumnThree:width])
-    cv2.imshow("roiDilat 9", simpleList[-1])
+    #edgeImageList.append(wrapedEdges[heightRowThree: height,0:widthColumnTwo])
+    #cv2.imshow("roiDilat 7", edgeImageList[-1])
+    #edgeImageList.append(wrapedEdges[heightRowThree: height,widthColumnTwo:widthColumnThree])
+    #cv2.imshow("roiDilat 8", edgeImageList[-1])
+    #edgeImageList.append(wrapedEdges[heightRowThree: height,widthColumnThree:width])
+    #cv2.imshow("roiDilat 9", edgeImageList[-1])
     
     
+    listOfCnts = []
     n=0
+    for elem in edgeImageList:
+        
+        cnts, hierarchy = cv2.findContours(elem,cv2.RETR_LIST,cv2.CHAIN_APPROX_SIMPLE)
+         
+        listOfCnts.append(cnts)
+        cv2.drawContours(orgImageList[n], cnts, -1, (0,255,255), 3)
+        print "nr."+ str(n)
+        print len(cnts)
+        n=n+1
     
-    for elem in simpleList:
+    cv2.imshow("roiOrg 1", orgImageList[-1])
+    cv2.imshow("roiOrg 2", orgImageList[-1])
+    cv2.imshow("roiOrg 3", orgImageList[-1])
+    
+    #for elem in edgeImageList:
         
         #cv2.imshow("roiDilat"+'n', elem)
     
-        n=n+1
-        print elem
+        #n=n+1
+        #print elem
     #allFields = array([,,,
     #                   ,,,
     #                   ,,])
@@ -90,6 +112,7 @@ def schnibbidiSchnapp2(warpedEdges, warpedFrame):
     cntsRoi, hierarchy = cv2.findContours(warpedEdges,cv2.RETR_LIST,cv2.CHAIN_APPROX_SIMPLE)
     #cv2.drawContours(roiFrame, cntsRoi, -1, (0,255,255), 3)
     
+    list = []
     
     for found in cntsRoi:
         area = abs(cv2.contourArea(found))
@@ -97,12 +120,14 @@ def schnibbidiSchnapp2(warpedEdges, warpedFrame):
         
         print area
         
-        if (area > 10000 and area< 30000):
+        #cv2.drawContours(warpedFrame, [found], -1, (255,50,200), 3)
+        
+        if (area > 100 and area< 100000):
         
             formFactor = abs(1/ ((perimeter*perimeter) / (4*pi*area )));
             #print formFactor
             #print area
-            cv2.drawContours(warpedFrame, [found], -1, (200,50,255), 3)
+            #cv2.drawContours(warpedFrame, [found], -1, (200,50,255), 3)
 
             #print formFactor
             if(formFactor>0.55 and formFactor<0.7):
@@ -110,10 +135,14 @@ def schnibbidiSchnapp2(warpedEdges, warpedFrame):
                 epsilon = 0.01*cv2.arcLength(found,True)
                 approx = cv2.approxPolyDP(found,epsilon,True)
                 
-                #cv2.drawContours(warpedFrame, [found], -1, (150,100,100), 3)
+                cv2.drawContours(warpedFrame, [found], -1, (150,100,100), 3)
             
-    cv2.imshow("warpedFrame", warpedFrame)
-    cv2.imshow("warpedEdges", warpedEdges)           
+                list.append(found)
+            
+    if(len(list)>=9):
+        print "all fields req"
+    cv2.imshow("warpedFrame2", warpedFrame)
+    cv2.imshow("warpedEdges2", warpedEdges)           
 
 def rectify(h):
     h = h.reshape((4,2))
@@ -259,7 +288,7 @@ while(1):
                 #get the eges for rotation
                 #cv2.drawContours(roiFrame, cntsRoi, -1, (0,255,255), 3)
                 roiEdges = cv2.Canny(roiFrame,50,255)
-                #roiDilat = cv2.dilate(roiEdges,np.ones((2,2),np.uint8),iterations = 1)
+                roiEdges = cv2.dilate(roiEdges,np.ones((2,2),np.uint8),iterations = 1)
                 cntsRoi, hierarchy = cv2.findContours(roiEdges,cv2.RETR_LIST,cv2.CHAIN_APPROX_SIMPLE)    
                     
 
@@ -274,7 +303,7 @@ while(1):
                         perimeter = cv2.arcLength(found,True)                        
                         formFactor = abs(1/ ((perimeter*perimeter) / (4*pi*area )));
                         #print formFactor
-                        print area
+                        #print area
 
                         #cv2.drawContours(roiFrame, [found], -1, (255,0,255), 3)    
                         if(formFactor>0.55 and formFactor<0.7):
@@ -300,7 +329,7 @@ while(1):
                                 #rotated = cv2.warpAffine(roiDilat, matrix, (w, h))
                                 #cv2.imshow("rotated", rotated)
    
-                                if(True):
+                                if(False):
                                     print approx
                                     #draw corners and shape
                                     cv2.drawContours(roiFrame, [approx], -1, (255,0,255), 3)  
@@ -321,20 +350,21 @@ while(1):
                                 warpedFrame = four_point_transform(roiFrame, pts1)
                                 warpedEdges = four_point_transform(roiEdges, pts1)
                                 #warpedDilat = four_point_transform(roiDilat, pts1)
-                                cv2.imshow("warpedFrame", warpedFrame)
-                                cv2.imshow("warpedEdges", warpedEdges)
+                                #cv2.imshow("warpedFrame", warpedFrame)
+                                #cv2.imshow("warpedEdges", warpedEdges)
                                 
                                 
                                 
                                 # TODO schnibbidischapp into nine parts
-                                #schnibbidiSchnapp(warped)
-                                #schnibbidiSchnapp2(warpedDilat, warpedFrame)
+                                schnibbidiSchnapp(warpedEdges, warpedFrame)
+                                #schnibbidiSchnapp2(warpedEdges, warpedFrame)
+                                
                 #cv2.imshow("roiDilat", roiDilat)
                 cv2.imshow("roiFrame", roiFrame)
 
         
     cv2.imshow('frameCopy',frameCopy)
-    cv2.imshow('frame',frame)
+    #cv2.imshow('frame',frame)
     #cv2.imshow('edges',edges)
     #cv2.imshow('dilation',dilation)
     
