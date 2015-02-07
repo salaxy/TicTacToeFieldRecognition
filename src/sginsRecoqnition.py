@@ -1,7 +1,7 @@
 '''
 Created on 07.02.2015
 
-@author: Salaxy
+@author: Andy Klay
 '''
 
 import cv2
@@ -15,22 +15,38 @@ def findSign(edgesImage, image):
 
 
     edges = cv2.Canny(image,100,255)
-    dilation = cv2.dilate(edges,np.ones((1,1),np.uint8),iterations = 2)
+    dilation = cv2.dilate(edges,np.ones((3,3),np.uint8),iterations = 2)
     cnts, hierarchy = cv2.findContours(dilation,cv2.RETR_LIST,cv2.CHAIN_APPROX_SIMPLE)
 
 
     for ct in cnts:
         area = abs(cv2.contourArea(ct))
         perimeter = cv2.arcLength(ct,True)
+        #print area
         
-        cv2.drawContours(image, [ct], -1, (255,50,200), 3)
-        if (area > 50 and area< 500):
-            print area
+        x,y,w,h = cv2.boundingRect(ct)
+        aspect_ratio = float(w)/h
+        rect_area = w*h
+        #extent = float(area)/rect_area
+        
+
+        
+
+        
+        #cv2.drawContours(image, [ct], -1, (255,50,200), 3)
+        if (rect_area > 1000 and rect_area< 5000):
+            #print area
+            print rect_area
             formFactor = abs(1/ ((perimeter*perimeter) / (4*pi*area )));
-            cv2.drawContours(image, [ct], -1, (0,255,255), 3)
+            #cv2.drawContours(image, [ct], -1, (0,255,255), 3)
+            
+            rect = np.array([[x,y],[x+w,y],[x+w,y+h],[x,y+h]], np.int32)
+            rect = rect.reshape((-1,1,2))
+            cv2.drawContours(image, [rect], -1, (0,0,255), 3)
 
-
-
+        # wenn kein rechteck in dieser groessenordung
+        # gefunden wurde,
+        #dann ist das Feld leer
     pass
 
 if __name__ == '__main__':
