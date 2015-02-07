@@ -28,7 +28,7 @@ def findSign(edgesImage, image):
             #print area
             #print rect_area
             
-            #cv2.drawContours(image, [ct], -1, (0,255,255), 3)
+            cv2.drawContours(image, [ct], -1, (0,255,255), 3)
             
             area = abs(cv2.contourArea(ct))
             perimeter = cv2.arcLength(ct,True)
@@ -43,15 +43,26 @@ def findSign(edgesImage, image):
 
             signArea=rect_area
             foundaSignFlag=foundaSignFlag+1
+            
+            print "formFactor: " + str(formFactor)
+            print "aspect_ratio: " + str(aspect_ratio)
+            print "perimeter: " + str(perimeter)
+            print "area" + str(area)
+            
+            if (formFactor<0.5):
+                print "found a cross"
+            else:
+                print "found a circle"
         else:       
             # wenn kein rechteck in dieser groessenordung
             # gefunden wurde,
             #dann ist das Feld leer
             pass
         
-        
     print "foundaSignFlag: " + str(foundaSignFlag)
     print "signArea: " + str(signArea)
+    print ""
+    
     return foundaSignFlag
     pass
 
