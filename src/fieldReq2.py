@@ -34,14 +34,17 @@ def schnibbidiSchnapp(wrapedEdges, warpedImage):
     edgeImageList.append(wrapedEdges[0:heightRowTwo,0:widthColumnTwo])
     orgImageList.append(warpedImage[0:heightRowTwo,0:widthColumnTwo])
     cv2.imshow("roiDilat 1", edgeImageList[-1])
+    #cv2.imwrite("roiDilat1.png", edgeImageList[-1])
 
     edgeImageList.append(wrapedEdges[0:heightRowTwo,widthColumnTwo:widthColumnThree])
     orgImageList.append(warpedImage[0:heightRowTwo,widthColumnTwo:widthColumnThree])
     cv2.imshow("roiDilat 2", edgeImageList[-1])
+    #cv2.imwrite("roiDilat2.png", edgeImageList[-1])
 
     edgeImageList.append(wrapedEdges[0:heightRowTwo,widthColumnThree:width])
     orgImageList.append(warpedImage[0:heightRowTwo,widthColumnThree:width])
     cv2.imshow("roiDilat 3", edgeImageList[-1])
+    #cv2.imwrite("roiDilat3.png", edgeImageList[-1])
 
     
     #edgeImageList.append(wrapedEdges[heightRowTwo:heightRowThree,0:widthColumnTwo])
@@ -66,14 +69,27 @@ def schnibbidiSchnapp(wrapedEdges, warpedImage):
         cnts, hierarchy = cv2.findContours(elem,cv2.RETR_LIST,cv2.CHAIN_APPROX_SIMPLE)
          
         listOfCnts.append(cnts)
-        cv2.drawContours(orgImageList[n], cnts, -1, (0,255,255), 3)
-        print "nr."+ str(n)
-        print len(cnts)
+        
+        for ct in cnts:
+            area = abs(cv2.contourArea(ct))
+            perimeter = cv2.arcLength(ct,True)
+            
+            #cv2.drawContours(warpedFrame, [found], -1, (255,50,200), 3)
+            if (area > 50 and area< 500):
+                print area
+                formFactor = abs(1/ ((perimeter*perimeter) / (4*pi*area )));
+                cv2.drawContours(orgImageList[n], [ct], -1, (0,255,255), 3)
+        
+        #print "nr."+ str(n)
+        #print len(cnts)
         n=n+1
     
-    cv2.imshow("roiOrg 1", orgImageList[-1])
-    cv2.imshow("roiOrg 2", orgImageList[-1])
-    cv2.imshow("roiOrg 3", orgImageList[-1])
+    cv2.imshow("roiOrg1", orgImageList[0])
+    #cv2.imwrite("roiOrg1.png", orgImageList[0])
+    cv2.imshow("roiOrg 2", orgImageList[1])
+    #cv2.imwrite("roiOrg2.png", orgImageList[1])
+    cv2.imshow("roiOrg 3", orgImageList[2])
+    #cv2.imwrite("roiOrg3.png", orgImageList[2])
     
     #for elem in edgeImageList:
         
