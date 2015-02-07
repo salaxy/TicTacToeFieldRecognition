@@ -211,128 +211,132 @@ while(1):
     
     edges = cv2.Canny(frame,100,255)
     dilation = cv2.dilate(edges,np.ones((1,1),np.uint8),iterations = 2)
-    
     contours, hierarchy = cv2.findContours(dilation,cv2.RETR_LIST,cv2.CHAIN_APPROX_SIMPLE)
     #cv2.drawContours(frame, contours, -1, (0,255,0), 3)
-
-    
     
     for cnt in contours:
         
         #if(cv2.isContourConvex(cnt)):
-        if(True):
+        #cv2.drawContours(frame, [cnt], -1, (255,0,0), 3)
+        
+        #M = cv2.moments(cnt)
+        #cx = int(M['m10']/M['m00'])
+        #cy = int(M['m01']/M['m00'])
+        area = abs(cv2.contourArea(cnt))
+        #epsilon = 0.1*cv2.arcLength(cnt,True)
+        
+        if (area > 20000 and area < 70000):
             
-            #cv2.drawContours(frame, [cnt], -1, (255,0,0), 3)
+            perimeter = cv2.arcLength(cnt,True)
+            formFactor = abs(1/ ((perimeter*perimeter) / (4*pi*area )));
+            #print formFactor
+            #print area
+            cv2.drawContours(frame, [cnt], -1, (0,255,255), 3)
             
-            #M = cv2.moments(cnt)
-            #cx = int(M['m10']/M['m00'])
-            #cy = int(M['m01']/M['m00'])
-            area = abs(cv2.contourArea(cnt))
-            #epsilon = 0.1*cv2.arcLength(cnt,True)
-            
-            if (area > 20000 and area< 70000):
+            if(formFactor>0.55 and formFactor<0.7):
                 
-                perimeter = cv2.arcLength(cnt,True)
-                formFactor = abs(1/ ((perimeter*perimeter) / (4*pi*area )));
-                #print formFactor
-                #print area
-                cv2.drawContours(frame, [cnt], -1, (0,255,255), 3)
+                cv2.drawContours(frame, [cnt], -1, (0,255,0), 3)
+
+                x,y,w,h = cv2.boundingRect(cnt)
+                #aspect_ratio = float(w)/h
+                #rect_area = w*h
+                #extent = float(area)/rect_area
+
+                #TODO we need the corners for the robot actions
+                # This is the Region of Interest, so next step is to isolate it
+                rect = np.array([[x,y],[x+w,y],[x+w,y+h],[x,y+h]], np.int32)
+                rect = rect.reshape((-1,1,2))
+                cv2.drawContours(frame, [rect], -1, (0,0,255), 3)
+                cv2.drawContours(dilation, [rect], -1, (255,255,255), 3)
                 
-                if(formFactor>0.55 and formFactor<0.7):
-                    
-                    cv2.drawContours(frame, [cnt], -1, (0,255,0), 3)
+                roiDilat = dilation[y:y+h,x:x+w]
+                roiFrame = frameCopy[y:y+h,x:x+w]
+                #roiEdges = edges[y:y+h,x:x+w]
+                #print roiDilat.shape
+                #imgheader = cv2.cv.CreateImageHeader((roiDilat[0], roiDilat[1]), cv2.cv.IPL_DEPTH_8U, 1)
+                #opencvImg = np.asarray(imgheader[:,:])
+                #cv2.imshow("roiDilat", roiDilat)
+                
+                #get the eges for rotation
+                cntsRoi, hierarchy = cv2.findContours(roiDilat,cv2.RETR_LIST,cv2.CHAIN_APPROX_SIMPLE)
+                #cv2.drawContours(roiFrame, cntsRoi, -1, (0,255,255), 3)
 
-                    x,y,w,h = cv2.boundingRect(cnt)
-                    #aspect_ratio = float(w)/h
-                    #rect_area = w*h
-                    #extent = float(area)/rect_area
-
-                    #TODO we need the corners for the robot actions
-                    # This is the Region of Interest, so next step is to isolate it
-                    rect = np.array([[x,y],[x+w,y],[x+w,y+h],[x,y+h]], np.int32)
-                    rect = rect.reshape((-1,1,2))
-                    cv2.drawContours(frame, [rect], -1, (0,0,255), 3)
                     
-                    roiDilat = dilation[y:y+h,x:x+w]
-                    roiFrame = frameCopy[y:y+h,x:x+w]
-                    roiEdges = edges[y:y+h,x:x+w]
-                    #roiDilat = edges[100:200,100:300]
-                    #print roiDilat.shape
-                    #imgheader = cv2.cv.CreateImageHeader((roiDilat[0], roiDilat[1]), cv2.cv.IPL_DEPTH_8U, 1)
-                    #opencvImg = np.asarray(imgheader[:,:])
-                    cv2.imshow("roiDilat", roiDilat)
                     
-                    #get the eges for rotation
-                    cntsRoi, hierarchy = cv2.findContours(roiDilat,cv2.RETR_LIST,cv2.CHAIN_APPROX_SIMPLE)
-                    #cv2.drawContours(roiFrame, cntsRoi, -1, (0,255,255), 3)
-                    cv2.imshow("roiFrame", roiFrame)
                     
-                    for found in cntsRoi:
-                        area = abs(cv2.contourArea(found))
-                        perimeter = cv2.arcLength(found,True)
-                        
-                        if (area > 20000 and area< 60000):
-                        
-                            formFactor = abs(1/ ((perimeter*perimeter) / (4*pi*area )));
-                            #print formFactor
-                            #print area
+    #secound stage ******************************************************************************* 
+    #wrapping of whole gamefield in a new image
+    for found in cntsRoi:
+        area = abs(cv2.contourArea(found))
+        print area
+        
+        if (area > 500 and area < 100000):
+            perimeter = cv2.arcLength(found,True)                        
+            formFactor = abs(1/ ((perimeter*perimeter) / (4*pi*area )));
+            #print formFactor
+            #print area
 
-                            if(formFactor>0.55 and formFactor<0.7):
-                        
-                                epsilon = 0.01*cv2.arcLength(found,True)
-                                approx = cv2.approxPolyDP(found,epsilon,True)
-                        
-                                #cv2.drawContours(roiFrame, [found], -1, (255,0,255), 3)                        
-    
-                                #print len(approx)
-                                #cv2.drawContours(roiFrame, [approx], -1, (255,0,255), 3)     
-                                if(len(approx)==4):
-                                         
-                        
-                                    #rotating the roiDilat for analysis of the sub sections
-                                    ( width, height) = roiDilat.shape[:2]
-                                    #moment = cv2.moments(approx)
-                                    #cx = int(moment['m10']/moment['m00'])
-                                    #cy = int(moment['m01']/moment['m00'])
-                                    #center = (cx, cy)
-                                    #center = (w / 2, h / 2)
-                                    #matrix = cv2.getRotationMatrix2D(center, 10, 1.0)
-                                    #rotated = cv2.warpAffine(roiDilat, matrix, (w, h))
-                                    #cv2.imshow("rotated", rotated)
-                        
-                                    if(False):
-                                        print approx
-                                        #draw corners and shape
-                                        cv2.drawContours(roiFrame, [approx], -1, (255,0,255), 3)  
-                                        cv2.drawContours(roiFrame, [approx[0]], -1, (0,255,0), 10)
-                                        cv2.drawContours(roiFrame, [approx[1]], -1, (0,255,0), 10)
-                                        cv2.drawContours(roiFrame, [approx[2]], -1, (0,255,0), 10)
-                                        cv2.drawContours(roiFrame, [approx[3]], -1, (0,255,0), 10)
-                                    
-                                    
-                        
-                                    #prepare correct transform.
-                                    pts1 = np.array(approx, dtype = "float32")
-                                    #pts2 = np.float32([[0,0],[height,0],[0,width],[width,height]])
-                                    #transformMatrix = cv2.getPerspectiveTransform(pts1,pts2)
-                                    #dst = cv2.warpPerspective(roiFrame,transformMatrix,(height,width))
-                                    #cv2.imshow("dst", dst)
-                                    
-                                    warpedFrame = four_point_transform(roiFrame, pts1)
-                                    warpedEdges = four_point_transform(roiEdges, pts1)
-                                    warpedDilat = four_point_transform(roiDilat, pts1)
-                                    #cv2.imshow("warped", warped)
-                                    #cv2.imshow("roiDilate", warpedDilate)
-                                    
-                                    
-                                    
-                                    # TODO schnibbidischapp into nine parts
-                                    #schnibbidiSchnapp(warped)
-                                    schnibbidiSchnapp2(warpedDilat, warpedFrame)
+            cv2.drawContours(roiFrame, [found], -1, (255,0,255), 3)    
+            if(formFactor>0.55 and formFactor<0.7):
+        
+                epsilon = 0.01*cv2.arcLength(found,True)
+                approx = cv2.approxPolyDP(found,epsilon,True)
+        
+                #cv2.drawContours(roiFrame, [found], -1, (255,0,255), 3)                        
 
+                #print len(approx)
+                cv2.drawContours(roiFrame, [approx], -1, (255,0,255), 3)     
+                if(len(approx)==4):
+                         
+        
+                    #rotating the roiDilat for analysis of the sub sections
+                    ( width, height) = roiDilat.shape[:2]
+                    #moment = cv2.moments(approx)
+                    #cx = int(moment['m10']/moment['m00'])
+                    #cy = int(moment['m01']/moment['m00'])
+                    #center = (cx, cy)
+                    #center = (w / 2, h / 2)
+                    #matrix = cv2.getRotationMatrix2D(center, 10, 1.0)
+                    #rotated = cv2.warpAffine(roiDilat, matrix, (w, h))
+                    #cv2.imshow("rotated", rotated)
+        
+                    if(False):
+                        print approx
+                        #draw corners and shape
+                        cv2.drawContours(roiFrame, [approx], -1, (255,0,255), 3)  
+                        cv2.drawContours(roiFrame, [approx[0]], -1, (0,255,0), 10)
+                        cv2.drawContours(roiFrame, [approx[1]], -1, (0,255,0), 10)
+                        cv2.drawContours(roiFrame, [approx[2]], -1, (0,255,0), 10)
+                        cv2.drawContours(roiFrame, [approx[3]], -1, (0,255,0), 10)
+                    
+                    
+        
+                    #prepare correct transform.
+                    pts1 = np.array(approx, dtype = "float32")
+                    #pts2 = np.float32([[0,0],[height,0],[0,width],[width,height]])
+                    #transformMatrix = cv2.getPerspectiveTransform(pts1,pts2)
+                    #dst = cv2.warpPerspective(roiFrame,transformMatrix,(height,width))
+                    #cv2.imshow("dst", dst)
+                    
+                    warpedFrame = four_point_transform(roiFrame, pts1)
+                    #warpedEdges = four_point_transform(roiEdges, pts1)
+                    warpedDilat = four_point_transform(roiDilat, pts1)
+                    cv2.imshow("warpedFrame", warpedFrame)
+                    cv2.imshow("warpedDilat", warpedDilat)
+                    
+                    
+                    
+                    # TODO schnibbidischapp into nine parts
+                    #schnibbidiSchnapp(warped)
+                    #schnibbidiSchnapp2(warpedDilat, warpedFrame)
+
+    cv2.imshow("roiDilat", roiDilat)
+    cv2.imshow("roiFrame", roiFrame)
+        
     cv2.imshow('frame',frame)
-    cv2.imshow('edges',edges)
-    cv2.imshow('dilation',dilation)
+    #cv2.imshow('edges',edges)
+    #cv2.imshow('dilation',dilation)
+    
 
     
     k = cv2.waitKey(5) & 0xFF
