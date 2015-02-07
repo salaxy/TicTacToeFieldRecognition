@@ -8,13 +8,14 @@ import cv2
 import numpy as np
 from cmath import rect, pi
 
-def findSign(edgesImage, image):
+def findSign(image):
 
     edges = cv2.Canny(image,100,255)
     dilation = cv2.dilate(edges,np.ones((3,3),np.uint8),iterations = 2)
     cnts, hierarchy = cv2.findContours(dilation,cv2.RETR_LIST,cv2.CHAIN_APPROX_SIMPLE)
 
     foundaSignFlag=0
+    sign=0
     signArea=0
 
 
@@ -34,8 +35,7 @@ def findSign(edgesImage, image):
             perimeter = cv2.arcLength(ct,True)
             formFactor = abs(1/ ((perimeter*perimeter) / (4*pi*area )));
             aspect_ratio = float(w)/h
-
-            #extent = float(area)/rect_area
+            extent = float(area)/rect_area
             
             rect = np.array([[x,y],[x+w,y],[x+w,y+h],[x,y+h]], np.int32)
             rect = rect.reshape((-1,1,2))
@@ -47,12 +47,16 @@ def findSign(edgesImage, image):
             print "formFactor: " + str(formFactor)
             print "aspect_ratio: " + str(aspect_ratio)
             print "perimeter: " + str(perimeter)
-            print "area" + str(area)
+            print "extent: " + str(extent)
+            print "area: " + str(area)
+            print "countour_len: " + str(len(ct))
             
-            if (formFactor<0.5):
+            if (formFactor<0.5 and extent<0.5):
                 print "found a cross"
-            else:
+                sign = 1
+            elif(formFactor>0.5 and extent>0.5):
                 print "found a circle"
+                sign = 2
         else:       
             # wenn kein rechteck in dieser groessenordung
             # gefunden wurde,
@@ -63,7 +67,7 @@ def findSign(edgesImage, image):
     print "signArea: " + str(signArea)
     print ""
     
-    return foundaSignFlag
+    return sign
     pass
 
 if __name__ == '__main__':
@@ -75,8 +79,8 @@ if __name__ == '__main__':
     roiOrg2 = cv2.imread("roiOrg2.png")
 
 
-    findSign(roiDilat1, roiOrg1)
-    findSign(roiDilat2, roiOrg2)
+    findSign(roiOrg1)
+    findSign(roiOrg2)
 
 
     cv2.imshow("roiOrg1", roiOrg1)

@@ -9,7 +9,7 @@ import numpy as np
 from cmath import rect, pi
 import time
 from array import array
-
+from sginsRecoqnition import findSign
 
 
 def schnibbidiSchnapp(wrapedEdges, warpedImage):
@@ -34,16 +34,19 @@ def schnibbidiSchnapp(wrapedEdges, warpedImage):
     edgeImageList.append(wrapedEdges[0:heightRowTwo,0:widthColumnTwo])
     orgImageList.append(warpedImage[0:heightRowTwo,0:widthColumnTwo])
     cv2.imshow("roiDilat 1", edgeImageList[-1])
+    eins=findSign(warpedImage)
     #cv2.imwrite("roiDilat1.png", edgeImageList[-1])
 
     edgeImageList.append(wrapedEdges[0:heightRowTwo,widthColumnTwo:widthColumnThree])
     orgImageList.append(warpedImage[0:heightRowTwo,widthColumnTwo:widthColumnThree])
     cv2.imshow("roiDilat 2", edgeImageList[-1])
+    zwei=findSign(warpedImage)
     #cv2.imwrite("roiDilat2.png", edgeImageList[-1])
 
     edgeImageList.append(wrapedEdges[0:heightRowTwo,widthColumnThree:width])
     orgImageList.append(warpedImage[0:heightRowTwo,widthColumnThree:width])
     cv2.imshow("roiDilat 3", edgeImageList[-1])
+    eins=findSign(warpedImage)
     #cv2.imwrite("roiDilat3.png", edgeImageList[-1])
 
     
