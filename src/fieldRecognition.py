@@ -12,7 +12,6 @@ from array import array
 from signRecognition import findASign
 
 
-
 def testIfEnoughFields(edgeImageList, orgImageList):
     listOfCnts = []
     n = 0
